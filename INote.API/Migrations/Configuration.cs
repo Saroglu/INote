@@ -25,12 +25,12 @@ namespace INote.API.Migrations
 
                 var user = new ApplicationUser
                 {
-                    UserName = "yigith1@gmail.com",
-                    Email = "yigith1@gmail.com",
+                    UserName = "erol.saroglu@hotmail.com",
+                    Email = "erol.saroglu@hotmail.com",
                     EmailConfirmed = true
                 };
 
-                userManager.Create(user, "Ankara1.");
+                userManager.Create(user, "Erol1.");
 
                 context.Notes.Add(new Note
                 {

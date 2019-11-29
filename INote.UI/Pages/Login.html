@@ -1,4 +1,6 @@
 ﻿<!--https://mdbootstrap.com/docs/jquery/forms/basic/?#!-->
+<div class="container">
+
 <div class="row">
     <div class="col-md-8 col-lg-6 mx-auto mt-md-5 mt-sm-2">
         <div class="card">
@@ -7,7 +9,16 @@
                 <form name="frmLogin" class="text-center border border-light p-5" action="#!" ng-submit="login($event)">
 
                     <p class="h4 mb-4">Giriş Yap</p>
-
+                    <div class="alert alert-danger text-left" ng-show="hasErrors()">
+                        <ul class="mb-0">
+                            <li ng-repeat="error in errors">
+                                {{ error }}
+                            </li>
+                        </ul>
+                    </div>
+                    <div class="alert alert-success text-left" ng-show="successMessage">
+                        {{ successMessage }}
+                    </div>
                     <!-- Email -->
                     <input ng-model="user.username" type="email" id="Email" name="Email" class="form-control mb-4" placeholder="E-mail">
 
@@ -42,4 +53,5 @@
             </div>
         </div>
     </div>
+</div>
 </div>
