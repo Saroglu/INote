@@ -54,18 +54,22 @@ app.controller("indexCtrl", function ($scope, $window, $http, $location) {
             $scope.loggedInUserEmail = null;
         }
     };
+
     $scope.logout = function (e) {
         e.preventDefault();
         $scope.setLoggedInUser(null);
+
         $http.post(apiUrl + "api/Account/Logout", null, $scope.requestConfig()).then(
             function (response) {
+
             }
         );
 
         $window.sessionStorage.removeItem("token");
         $window.localStorage.removeItem("token");
         $location.path("login");
-    }
+    };
+
     $scope.checkAuthentication();
 });
 
@@ -113,42 +117,84 @@ app.controller("mainCtrl", function ($scope, $http, $window, $location) {
         );
     };
 
+    $scope.newNote = function (e) {
+        if (e) {
+            e.preventDefault();
+        }
+
+        $scope.selectedNote = null;
+
+        $scope.activeNote = {
+            Id: 0,
+            Title: "",
+            Content: ""
+        };
+    };
+
     $scope.showNote = function (e, note) {
-        e.preventDefault();
+        if (e)
+            e.preventDefault();
+
         $scope.activeNote = angular.copy(note);
         $scope.selectedNote = note;
-    }
+    };
+
     $scope.saveNote = function (e) {
         e.preventDefault();
         if ($scope.activeNote.Id !== 0) {
-
             $http.put(apiUrl + "api/Notes/PutNote/" + $scope.activeNote.Id, $scope.activeNote, $scope.requestConfig())
-                .then(function (response) {
-                    console.log(response.data);
-                    $scope.selectedNote.Title = response.data.Title;
-                    $scope.selectedNote.Content = response.data.Content;
-                    $scope.selectedNote.ModifiedTime = response.data.ModifiedTime;
+                .then(
+                    function (response) {
+                        console.log(response.data);
+                        $scope.selectedNote.Title = response.data.Title;
+                        $scope.selectedNote.Content = response.data.Content;
+                        $scope.selectedNote.ModifiedTime = response.data.ModifiedTime;
+                    },
+                    function (response) {
 
-                }, function (response) {
-
-                });
+                    },
+                );
         }
-    }
-    $scope.deleteNote = function (e) {
+        else {
+            $http.post(apiUrl + "api/Notes/PostNote/", $scope.activeNote, $scope.requestConfig())
+                .then(
+                    function (response) {
+                        $scope.notes.push(response.data);
+                        $scope.showNote(null, response.data);
+                    },
+                    function (response) {
 
-    }
+                    },
+                );
+        }
+    };
+
+    $scope.deleteNote = function (e) {
+        e.preventDefault();
+
+        if ($scope.selectedNote) {
+            $http.delete(apiUrl + "api/Notes/DeleteNote/" + $scope.selectedNote.Id, $scope.requestConfig())
+                .then(
+                    function (response) {
+                        var i = $scope.notes.indexOf($scope.selectedNote);
+                        $scope.notes.splice(i, 1);
+                        $scope.newNote();
+                    },
+                    function (response) {
+
+                    },
+                );
+        }
+    };
 
     $scope.noteActiveClass = function (id) {
-
         if ($scope.selectedNote == null) {
             return "";
         }
-
         return $scope.selectedNote.Id == id ? "active" : "";
-    }
+    };
 
     $scope.loadNotes();
-
 });
 
 app.controller("loginCtrl", function ($scope, $http, $location, $timeout, $httpParamSerializer, $window) {
@@ -211,7 +257,7 @@ app.controller("registerCtrl", function ($scope, $http) {
     $scope.successMessage = "";
 
     $scope.user = {
-        Email: "erol.saroglu@hotmail.com",
+        Email: "test@gmail.com",
         Password: "Ankara1.",
         ConfirmPassword: "Ankara1."
     };
